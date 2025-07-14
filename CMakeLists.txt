@@ -11,8 +11,8 @@ if (NOT CMAKE_BUILD_TYPE)
 endif()
 
 
-option(FLCL_BUILD_EXAMPLES "Build examples" ON)
-option(FLCL_BUILD_TESTS "Build tests" ON)
+# option(FLCL_BUILD_EXAMPLES "Build examples" ON)
+# option(FLCL_BUILD_TESTS "Build tests" ON)
 
 # We need to set CMAKE_POSITION_INDEPENDENT_CODE. Otherwise there is an issue
 # when linking flcl.cxx.cpp.o into libflcl. This is necessary even when
