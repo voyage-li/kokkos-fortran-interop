@@ -245,41 +245,41 @@ class ForView {
   using traits         = Kokkos::ViewTraits<DataType, Properties...>;
   using map_type       = Kokkos::Impl::ViewMapping<traits, typename traits::specialize>;
   using reference_type = typename map_type::reference_type;
-  Kokkos::View<DataType> fview;
+  Kokkos::View<DataType, Properties...> fview;
   int rank;
   struct Bnd dims[8];
 
  public:
   constexpr int get_rank() const { return rank; }
   struct Bnd get_dims(int num) { return dims[num]; }
-  ForView(std::string name, Bnd s1) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size());
+  ForView(std::string name, Bnd s1)
+      : fview(name, s1.size()) {
     rank    = fview.rank();
     dims[0] = s1;
   }
-  ForView(std::string name, Bnd s1, Bnd s2) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size());
+  ForView(std::string name, Bnd s1, Bnd s2)
+      : fview(name, s1.size(), s2.size()) {
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size());
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3)
+      : fview(name, s1.size(), s2.size(), s3.size()) {
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size());
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4)
+      : fview(name, s1.size(), s2.size(), s3.size(), s4.size()) {
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
     dims[3] = s4;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size());
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5)
+      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size()) {
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
@@ -287,8 +287,8 @@ class ForView {
     dims[3] = s4;
     dims[4] = s5;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size());
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6)
+      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size()) {
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
@@ -297,8 +297,8 @@ class ForView {
     dims[4] = s5;
     dims[5] = s6;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size());
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7)
+      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size()) {
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
@@ -308,9 +308,8 @@ class ForView {
     dims[5] = s6;
     dims[6] = s7;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8) {
-    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size(), s8.size());
-    rank    = fview.rank();
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8)
+      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size(), s8.size()) {
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
@@ -321,34 +320,34 @@ class ForView {
     dims[7] = s8;
   }
 
-  ForView(flcl_ndarray_t *p, Bnd s1) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
     dims[3] = s4;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
@@ -356,8 +355,8 @@ class ForView {
     dims[3] = s4;
     dims[4] = s5;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
@@ -366,8 +365,8 @@ class ForView {
     dims[4] = s5;
     dims[5] = s6;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
@@ -377,8 +376,8 @@ class ForView {
     dims[5] = s6;
     dims[6] = s7;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8) {
-    fview   = flcl::view_from_ndarray<DataType>(*p);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8)
+      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
     rank    = p->rank;
     dims[0] = s1;
     dims[1] = s2;
