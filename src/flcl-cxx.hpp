@@ -45,6 +45,7 @@
 #include <Kokkos_Core.hpp>
 #include <Kokkos_DualView.hpp>
 #include "flcl-types-cxx.hpp"
+#include <Kokkos_OffsetView.hpp>
 
 #define FLCL_NDARRAY_MAX_RANK 8
 
@@ -245,60 +246,57 @@ class ForView {
   using traits         = Kokkos::ViewTraits<DataType, Properties...>;
   using map_type       = Kokkos::Impl::ViewMapping<traits, typename traits::specialize>;
   using reference_type = typename map_type::reference_type;
-  Kokkos::View<DataType, Properties...> fview;
+  Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace> fview;
+  Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace> ofview;
   int rank;
   struct Bnd dims[8];
 
  public:
   constexpr int get_rank() const { return rank; }
   struct Bnd get_dims(int num) { return dims[num]; }
-  ForView(std::string name, Bnd s1)
-      : fview(name, s1.size()) {
+  ForView(std::string name, Bnd s1) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left});
     rank    = fview.rank();
     dims[0] = s1;
   }
-  ForView(std::string name, Bnd s1, Bnd s2)
-      : fview(name, s1.size(), s2.size()) {
-    rank    = fview.rank();
-    dims[0] = s1;
-    dims[1] = s2;
-  }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3)
-      : fview(name, s1.size(), s2.size(), s3.size()) {
+  ForView(std::string name, Bnd s1, Bnd s2) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left});
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
-    dims[2] = s3;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4)
-      : fview(name, s1.size(), s2.size(), s3.size(), s4.size()) {
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left, s3.left});
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
-    dims[3] = s4;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5)
-      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size()) {
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left, s3.left, s4.left});
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
     dims[3] = s4;
-    dims[4] = s5;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6)
-      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size()) {
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left});
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
     dims[3] = s4;
     dims[4] = s5;
-    dims[5] = s6;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7)
-      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size()) {
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left, s6.left});
     rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
@@ -306,68 +304,11 @@ class ForView {
     dims[3] = s4;
     dims[4] = s5;
     dims[5] = s6;
-    dims[6] = s7;
   }
-  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8)
-      : fview(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size(), s8.size()) {
-    dims[0] = s1;
-    dims[1] = s2;
-    dims[2] = s3;
-    dims[3] = s4;
-    dims[4] = s5;
-    dims[5] = s6;
-    dims[6] = s7;
-    dims[7] = s8;
-  }
-
-  ForView(flcl_ndarray_t *p, Bnd s1)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
-    dims[0] = s1;
-  }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
-    dims[0] = s1;
-    dims[1] = s2;
-  }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
-    dims[0] = s1;
-    dims[1] = s2;
-    dims[2] = s3;
-  }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
-    dims[0] = s1;
-    dims[1] = s2;
-    dims[2] = s3;
-    dims[3] = s4;
-  }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
-    dims[0] = s1;
-    dims[1] = s2;
-    dims[2] = s3;
-    dims[3] = s4;
-    dims[4] = s5;
-  }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
-    dims[0] = s1;
-    dims[1] = s2;
-    dims[2] = s3;
-    dims[3] = s4;
-    dims[4] = s5;
-    dims[5] = s6;
-  }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left, s6.left, s7.left});
+    rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
@@ -376,9 +317,10 @@ class ForView {
     dims[5] = s6;
     dims[6] = s7;
   }
-  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8)
-      : fview(std::move(flcl::view_from_ndarray<DataType>(*p))) {
-    rank    = p->rank;
+  ForView(std::string name, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8) {
+    fview   = Kokkos::View<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(name, s1.size(), s2.size(), s3.size(), s4.size(), s5.size(), s6.size(), s7.size(), s8.size());
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left, s6.left, s7.left, s8.left});
+    rank    = fview.rank();
     dims[0] = s1;
     dims[1] = s2;
     dims[2] = s3;
@@ -389,29 +331,85 @@ class ForView {
     dims[7] = s8;
   }
 
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0) const {
-    return fview(i0 - dims[0].left);
+  ForView(flcl_ndarray_t *p, Bnd s1) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left});
+    rank    = p->rank;
+    dims[0] = s1;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1, int i2) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left, i2 - dims[2].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left, s3.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
+    dims[2] = s3;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1, int i2, int i3) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left, i2 - dims[2].left, i3 - dims[3].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left, s3.left, s4.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
+    dims[2] = s3;
+    dims[3] = s4;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1, int i2, int i3, int i4) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left, i2 - dims[2].left, i3 - dims[3].left, i4 - dims[4].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
+    dims[2] = s3;
+    dims[3] = s4;
+    dims[4] = s5;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1, int i2, int i3, int i4, int i5) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left, i2 - dims[2].left, i3 - dims[3].left, i4 - dims[4].left, i5 - dims[5].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left, s6.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
+    dims[2] = s3;
+    dims[3] = s4;
+    dims[4] = s5;
+    dims[5] = s6;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1, int i2, int i3, int i4, int i5, int i6) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left, i2 - dims[2].left, i3 - dims[3].left, i4 - dims[4].left, i5 - dims[5].left, i6 - dims[6].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left, s6.left, s7.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
+    dims[2] = s3;
+    dims[3] = s4;
+    dims[4] = s5;
+    dims[5] = s6;
+    dims[6] = s7;
   }
-  KOKKOS_INLINE_FUNCTION reference_type &operator()(int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7) const {
-    return fview(i0 - dims[0].left, i1 - dims[1].left, i2 - dims[2].left, i3 - dims[3].left, i4 - dims[4].left, i5 - dims[5].left, i6 - dims[6].left, i7 - dims[7].left);
+  ForView(flcl_ndarray_t *p, Bnd s1, Bnd s2, Bnd s3, Bnd s4, Bnd s5, Bnd s6, Bnd s7, Bnd s8) {
+    fview   = flcl::view_from_ndarray<DataType>(*p);
+    ofview  = Kokkos::Experimental::OffsetView<DataType, Kokkos::LayoutLeft, flcl::HostMemorySpace, Kokkos::MemoryUnmanaged>(fview, {s1.left, s2.left, s3.left, s4.left, s5.left, s6.left, s7.left, s8.left});
+    rank    = p->rank;
+    dims[0] = s1;
+    dims[1] = s2;
+    dims[2] = s3;
+    dims[3] = s4;
+    dims[4] = s5;
+    dims[5] = s6;
+    dims[6] = s7;
+    dims[7] = s8;
+  }
+  template <typename... Args>
+  KOKKOS_INLINE_FUNCTION reference_type operator()(size_t i0, Args &&...args) const {
+    return ofview(i0, std::forward<Args>(args)...);
   }
 };
 }  // namespace flcl
